@@ -218,8 +218,20 @@ function bindEvents() {
           text: resultMessage
         }
       ]);
-
-      document.getElementById("doneMessage").textContent =
+// スプレッドシート送信
+fetch(GAS_URL, {
+  method: "POST",
+  body: JSON.stringify({
+    name: "匿名",
+    userId: "test",
+    part: partText,
+    score: scoreText,
+    trend: trendText,
+    team: teamText,
+    work: workText,
+    memo: memoText
+  })
+});      document.getElementById("doneMessage").textContent =
         !state.noPain && (state.score >= 4 || state.trend === "悪くなった")
           ? "入力ありがとうございました。負担が強い可能性があります。必要に応じて早めの相談を検討してください。"
           : "入力ありがとうございました。内容は現場改善と再発防止に活用されます。";
