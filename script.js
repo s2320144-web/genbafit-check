@@ -203,23 +203,14 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
       return;
     }
 
-    if (!liff.isLoggedIn()) {
-      alert("LINEログインが必要です");
-      liff.login();
-      return;
+    if (liff.isInClient()) {
+      await liff.sendMessages([
+        {
+          type: "text",
+          text: resultMessage
+        }
+      ]);
     }
-
-    if (!liff.isInClient()) {
-      alert("LINEアプリ内で開いてください");
-      return;
-    }
-
-    await liff.sendMessages([
-      {
-        type: "text",
-        text: resultMessage
-      }
-    ]);
 
     document.getElementById("doneMessage").textContent =
       !state.noPain && (state.score >= 4 || state.trend === "悪くなった")
@@ -252,12 +243,6 @@ document.getElementById("closeBtn").addEventListener("click", () => {
 async function initLiff() {
   try {
     await liff.init({ liffId: LIFF_ID });
-
-    if (!liff.isLoggedIn()) {
-      liff.login();
-      return;
-    }
-
     console.log("LIFF init success");
   } catch (error) {
     console.error("LIFF init error:", error);
