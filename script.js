@@ -203,11 +203,6 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
       return;
     }
 
-    if (!liff.isLoggedIn()) {
-      liff.login();
-      return;
-    }
-
     if (liff.isInClient()) {
       await liff.sendMessages([
         {
@@ -248,12 +243,6 @@ document.getElementById("closeBtn").addEventListener("click", () => {
 async function initLiff() {
   try {
     await liff.init({ liffId: LIFF_ID });
-
-    if (!liff.isLoggedIn()) {
-      liff.login();
-      return;
-    }
-
     console.log("LIFF init success");
   } catch (error) {
     console.error("LIFF init error:", error);
