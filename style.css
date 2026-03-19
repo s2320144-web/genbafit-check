@@ -1,0 +1,234 @@
+:root{
+  --green:#1f9448;
+  --green-dark:#16773a;
+  --green-soft:#eaf8ef;
+  --bg:#f3f5f7;
+  --card:#ffffff;
+  --line:#d9dee5;
+  --text:#1f2937;
+  --muted:#6b7280;
+  --shadow:0 8px 24px rgba(0,0,0,.08);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+}
+.app{
+  max-width:430px;
+  margin:0 auto;
+  min-height:100vh;
+  background:var(--bg);
+}
+.header{
+  background:linear-gradient(180deg,var(--green),var(--green-dark));
+  color:#fff;
+  padding:18px 16px 16px;
+  box-shadow:var(--shadow);
+}
+.header-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:12px;
+}
+.header-title{
+  font-size:18px;
+  font-weight:800;
+  letter-spacing:.02em;
+}
+.header-icons{
+  display:flex;
+  gap:12px;
+  font-size:18px;
+}
+.header-desc{
+  margin:0;
+  line-height:1.8;
+  font-size:13px;
+  opacity:.96;
+}
+.header-pills{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:14px;
+}
+.pill{
+  border:1px solid rgba(255,255,255,.35);
+  border-radius:999px;
+  padding:8px 12px;
+  font-size:12px;
+  font-weight:700;
+  background:rgba(255,255,255,.08);
+}
+.screen{
+  padding:18px 14px 28px;
+}
+.card{
+  background:var(--card);
+  border-radius:24px;
+  padding:20px 16px;
+  box-shadow:0 2px 10px rgba(0,0,0,.04);
+}
+.hidden{display:none !important}
+.step-badge{
+  display:inline-block;
+  background:#49a85f;
+  color:#fff;
+  font-size:12px;
+  font-weight:800;
+  border-radius:999px;
+  padding:8px 12px;
+  margin-bottom:14px;
+}
+.section-title{
+  margin:0 0 10px;
+  font-size:19px;
+  line-height:1.4;
+}
+.section-desc{
+  margin:0 0 18px;
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.7;
+}
+.grid{
+  display:grid;
+  gap:12px;
+}
+.grid-2{
+  grid-template-columns:1fr 1fr;
+}
+.option-btn{
+  appearance:none;
+  border:2px solid var(--line);
+  background:#fff;
+  border-radius:20px;
+  min-height:74px;
+  padding:14px 12px;
+  font-size:18px;
+  font-weight:800;
+  color:var(--text);
+}
+.option-btn.large{
+  min-height:92px;
+}
+.option-btn.full-btn{
+  width:100%;
+  margin-top:12px;
+}
+.option-btn.selected{
+  border-color:var(--green);
+  background:var(--green-soft);
+  color:var(--green-dark);
+}
+.field{
+  margin-top:14px;
+}
+.label{
+  display:block;
+  margin-bottom:8px;
+  font-size:13px;
+  font-weight:700;
+  color:#374151;
+}
+input,textarea{
+  width:100%;
+  border:2px solid var(--line);
+  border-radius:16px;
+  padding:14px;
+  font-size:15px;
+  background:#fff;
+}
+textarea{
+  resize:vertical;
+}
+.faces{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.face-btn{
+  border:2px solid var(--line);
+  background:#fff;
+  border-radius:18px;
+  min-height:88px;
+  padding:12px 10px;
+  text-align:center;
+}
+.face-btn.selected{
+  border-color:var(--green);
+  background:var(--green-soft);
+}
+.emoji{
+  font-size:28px;
+  margin-bottom:6px;
+}
+.face-label{
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:4px;
+}
+.face-score{
+  font-size:18px;
+  font-weight:800;
+}
+.actions{
+  display:flex;
+  gap:12px;
+  margin-top:18px;
+}
+.btn{
+  appearance:none;
+  border:none;
+  border-radius:20px;
+  min-height:60px;
+  font-size:16px;
+  font-weight:800;
+  flex:1;
+}
+.btn-primary{
+  background:var(--green);
+  color:#fff;
+}
+.btn-primary:disabled{
+  background:#cfd6df;
+  color:#fff;
+}
+.btn-secondary{
+  background:#eef1f5;
+  color:#4b5563;
+}
+.summary{
+  display:grid;
+  gap:12px;
+}
+.summary-box{
+  border:2px solid var(--line);
+  border-radius:18px;
+  padding:14px;
+  background:#fff;
+}
+.summary-label{
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+.summary-value{
+  font-size:16px;
+  font-weight:800;
+}
+.notice{
+  margin-top:16px;
+  border:2px solid #b9e4c5;
+  background:#eefaf1;
+  color:#166534;
+  border-radius:18px;
+  padding:14px;
+  font-size:14px;
+  line-height:1.8;
+}
