@@ -175,8 +175,7 @@ document.getElementById("toStep5").addEventListener("click", () => {
 
 document.querySelectorAll(".back").forEach(btn => {
   btn.addEventListener("click", () => {
-    const backStep = Number(btn.dataset.back);
-    showStep(backStep);
+    showStep(Number(btn.dataset.back));
   });
 });
 
@@ -203,13 +202,8 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
       return;
     }
 
-    if (!liff.isLoggedIn()) {
-      liff.login({ redirectUri: location.href });
-      return;
-    }
-
     if (!liff.isInClient()) {
-      alert("LINEアプリ内から開いてください");
+      alert("LINEアプリ内で開いてください");
       return;
     }
 
@@ -250,14 +244,10 @@ document.getElementById("closeBtn").addEventListener("click", () => {
 
 async function initLiff() {
   try {
-    await liff.init({
-      liffId: LIFF_ID,
-      withLoginOnExternalBrowser: true
-    });
+    await liff.init({ liffId: LIFF_ID });
 
-    if (!liff.isLoggedIn()) {
-      liff.login({ redirectUri: location.href });
-      return;
+    if (!liff.isInClient()) {
+      console.log("Opened outside LINE client");
     }
 
     console.log("LIFF init success");
