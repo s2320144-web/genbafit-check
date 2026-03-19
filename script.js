@@ -1,4 +1,4 @@
-const LIFF_ID = "YOUR_EXACT_LIFF_ID_HERE";
+const LIFF_ID = "2009527083-MXJru0ta";
 
 async function initLiff() {
   const statusEl = document.getElementById("status");
