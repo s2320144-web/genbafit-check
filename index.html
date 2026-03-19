@@ -3,155 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>現場fit チェック</title>
+  <title>LIFF確認</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif;
+      margin: 0;
+      padding: 24px;
+      background: #f6f7f9;
+      color: #111;
+    }
+    .card {
+      max-width: 520px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.08);
+    }
+    h1 {
+      font-size: 24px;
+      margin: 0 0 16px;
+    }
+    .status {
+      white-space: pre-wrap;
+      line-height: 1.7;
+      font-size: 16px;
+      padding: 16px;
+      border-radius: 12px;
+      background: #f3f4f6;
+    }
+    .ok { color: #166534; }
+    .ng { color: #b91c1c; }
+  </style>
 </head>
 <body>
-  <div class="app">
-    <div class="header">
-      <div class="header-top">
-        <div class="header-title">現場fit チェック</div>
-        <div class="header-icons">
-          <span>🔔</span>
-          <span>⋯</span>
-        </div>
-      </div>
-
-      <p class="header-desc">
-        腰・肩・膝などの違和感を早めに把握し、<br>
-        現場の作業改善につなげるための入力フォームです。
-      </p>
-
-      <div class="header-pills">
-        <span class="pill">LINEミニアプリ</span>
-        <span class="pill">20〜30秒入力</span>
-        <span class="pill">再発防止</span>
-      </div>
-    </div>
-
-    <div class="screen">
-      <section class="card" id="step1">
-        <div class="step-badge">STEP 1</div>
-        <h2 class="section-title">違和感がある部位</h2>
-        <p class="section-desc">一番近い部位を1つ選んでください。</p>
-
-        <button class="option-btn full-btn" id="noPainBtn">特にない</button>
-
-        <div class="grid grid-2" id="partOptions">
-          <button class="option-btn large" data-value="腰">腰</button>
-          <button class="option-btn large" data-value="肩">肩</button>
-          <button class="option-btn large" data-value="膝">膝</button>
-          <button class="option-btn large" data-value="その他">その他</button>
-        </div>
-
-        <div class="field hidden" id="otherPartWrap">
-          <label class="label" for="otherPart">その他の部位</label>
-          <input id="otherPart" type="text" placeholder="例：首、肘、手首など">
-        </div>
-
-        <div class="actions">
-          <button class="btn btn-primary" id="toStep2" disabled>次へ</button>
-        </div>
-      </section>
-
-      <section class="card hidden" id="step2">
-        <div class="step-badge">STEP 2</div>
-        <h2 class="section-title">痛みの強さ</h2>
-        <p class="section-desc">一番近い状態を選んでください。</p>
-
-        <div class="faces" id="scoreOptions"></div>
-
-        <div class="actions">
-          <button class="btn btn-secondary back" data-back="1">戻る</button>
-          <button class="btn btn-primary" id="toStep3" disabled>次へ</button>
-        </div>
-      </section>
-
-      <section class="card hidden" id="step3">
-        <div class="step-badge">STEP 3</div>
-        <h2 class="section-title">前週との比較</h2>
-        <p class="section-desc">先週と比べてどうでしたか？</p>
-
-        <div class="grid" id="trendOptions">
-          <button class="option-btn" data-value="良くなった">良くなった</button>
-          <button class="option-btn" data-value="変わらない">変わらない</button>
-          <button class="option-btn" data-value="悪くなった">悪くなった</button>
-        </div>
-
-        <div class="field">
-          <label class="label" for="team">班・工区（任意）</label>
-          <input id="team" type="text" placeholder="例：A班、2工区など">
-        </div>
-
-        <div class="actions">
-          <button class="btn btn-secondary back" data-back="1">戻る</button>
-          <button class="btn btn-primary" id="toStep4" disabled>次へ</button>
-        </div>
-      </section>
-
-      <section class="card hidden" id="step4">
-        <div class="step-badge">STEP 4</div>
-        <h2 class="section-title">原因と思われる作業</h2>
-        <p class="section-desc">一番近い作業を選んでください。</p>
-
-        <div class="grid grid-2" id="workOptions">
-          <button class="option-btn" data-value="中腰作業">中腰作業</button>
-          <button class="option-btn" data-value="重量物">重量物</button>
-          <button class="option-btn" data-value="高所作業">高所作業</button>
-          <button class="option-btn" data-value="ねじり動作">ねじり動作</button>
-          <button class="option-btn" data-value="長時間立ち作業">長時間立ち作業</button>
-          <button class="option-btn" data-value="その他">その他</button>
-        </div>
-
-        <div class="field hidden" id="otherWorkWrap">
-          <label class="label" for="otherWork">その他の作業</label>
-          <input id="otherWork" type="text" placeholder="例：脚立昇降、運搬の繰り返しなど">
-        </div>
-
-        <div class="field">
-          <label class="label" for="memo">補足メモ（任意）</label>
-          <textarea id="memo" rows="4" placeholder="補足があれば入力してください"></textarea>
-        </div>
-
-        <div class="actions">
-          <button class="btn btn-secondary back" data-back="3">戻る</button>
-          <button class="btn btn-primary" id="toStep5" disabled>次へ</button>
-        </div>
-      </section>
-
-      <section class="card hidden" id="step5">
-        <div class="step-badge">STEP 5</div>
-        <h2 class="section-title">入力内容の確認</h2>
-        <p class="section-desc">この内容で送信します。</p>
-
-        <div class="summary">
-          <div class="summary-box"><div class="summary-label">部位</div><div class="summary-value" id="confirmPart"></div></div>
-          <div class="summary-box"><div class="summary-label">痛みの強さ</div><div class="summary-value" id="confirmScore"></div></div>
-          <div class="summary-box"><div class="summary-label">前週比</div><div class="summary-value" id="confirmTrend"></div></div>
-          <div class="summary-box"><div class="summary-label">班・工区</div><div class="summary-value" id="confirmTeam"></div></div>
-          <div class="summary-box"><div class="summary-label">作業</div><div class="summary-value" id="confirmWork"></div></div>
-          <div class="summary-box"><div class="summary-label">補足</div><div class="summary-value" id="confirmMemo"></div></div>
-        </div>
-
-        <div class="notice">入力内容は、現場の作業改善と再発防止のために活用されます。</div>
-
-        <div class="actions">
-          <button class="btn btn-secondary back" data-back="4">戻る</button>
-          <button class="btn btn-primary" id="submitBtn">送信する</button>
-        </div>
-      </section>
-
-      <section class="card hidden" id="done">
-        <div class="step-badge">完了</div>
-        <h2 class="section-title">送信が完了しました</h2>
-        <p class="section-desc" id="doneMessage"></p>
-        <div class="notice" id="doneSummary"></div>
-        <div class="actions">
-          <button class="btn btn-primary" id="closeBtn">閉じる</button>
-        </div>
-      </section>
-    </div>
+  <div class="card">
+    <h1>LIFF動作確認</h1>
+    <div id="status" class="status">読み込み中...</div>
   </div>
 
   <script src="script.js"></script>
