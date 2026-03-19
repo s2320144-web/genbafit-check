@@ -14,12 +14,11 @@ const state = {
 };
 
 const faceLevels = [
-  { value: 0, emoji: "😀", label: "問題なし" },
-  { value: 2, emoji: "🙂", label: "少し違和感" },
-  { value: 4, emoji: "😐", label: "気になる" },
-  { value: 6, emoji: "😣", label: "やや強い" },
-  { value: 8, emoji: "😖", label: "強い" },
-  { value: 10, emoji: "😭", label: "かなり強い" }
+  { value: 1, emoji: "🙂", label: "少し違和感" },
+  { value: 2, emoji: "😐", label: "気になる" },
+  { value: 3, emoji: "😣", label: "やや強い" },
+  { value: 4, emoji: "😖", label: "強い" },
+  { value: 5, emoji: "😭", label: "かなり強い" }
 ];
 
 function textValue(v, other) {
@@ -48,7 +47,6 @@ function updateStep2() {
   document.querySelectorAll(".face-btn").forEach(btn => {
     btn.classList.toggle("selected", Number(btn.dataset.value) === state.score);
   });
-  document.getElementById("noPainScoreBtn").classList.toggle("selected", state.score === 0);
   document.getElementById("toStep3").disabled = state.score === null;
 }
 
@@ -72,7 +70,9 @@ function updateConfirm() {
   document.getElementById("confirmPart").textContent =
     state.noPain ? "特にない" : textValue(state.part, state.otherPart);
 
-  document.getElementById("confirmScore").textContent = `${state.score}/10`;
+  document.getElementById("confirmScore").textContent =
+    state.noPain ? "なし" : `${state.score}/5`;
+
   document.getElementById("confirmTrend").textContent = state.trend || "未入力";
   document.getElementById("confirmTeam").textContent = state.team || "未入力";
   document.getElementById("confirmWork").textContent = textValue(state.work, state.otherWork);
@@ -104,6 +104,7 @@ document.querySelectorAll("#partOptions .option-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     state.noPain = false;
     state.part = btn.dataset.value;
+    state.score = null;
     if (state.part !== "その他") state.otherPart = "";
     updateStep1();
   });
@@ -113,8 +114,8 @@ document.getElementById("noPainBtn").addEventListener("click", () => {
   state.noPain = true;
   state.part = "";
   state.otherPart = "";
-  state.score = 0;
-  state.trend = "変わらない";
+  state.score = null;
+  state.trend = "";
   updateStep1();
 });
 
@@ -124,12 +125,11 @@ document.getElementById("otherPart").addEventListener("input", e => {
 });
 
 document.getElementById("toStep2").addEventListener("click", () => {
-  showStep(2);
-});
-
-document.getElementById("noPainScoreBtn").addEventListener("click", () => {
-  state.score = 0;
-  updateStep2();
+  if (state.noPain) {
+    showStep(3);
+  } else {
+    showStep(2);
+  }
 });
 
 document.getElementById("toStep3").addEventListener("click", () => {
@@ -175,13 +175,14 @@ document.getElementById("toStep5").addEventListener("click", () => {
 
 document.querySelectorAll(".back").forEach(btn => {
   btn.addEventListener("click", () => {
-    showStep(Number(btn.dataset.back));
+    const backStep = Number(btn.dataset.back);
+    showStep(backStep);
   });
 });
 
 document.getElementById("submitBtn").addEventListener("click", async () => {
   const partText = state.noPain ? "特にない" : textValue(state.part, state.otherPart);
-  const scoreText = `${state.score}/10`;
+  const scoreText = state.noPain ? "なし" : `${state.score}/5`;
   const trendText = state.trend || "未入力";
   const teamText = state.team || "未入力";
   const workText = textValue(state.work, state.otherWork);
@@ -221,7 +222,7 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
     ]);
 
     document.getElementById("doneMessage").textContent =
-      state.score >= 8 || state.trend === "悪くなった"
+      !state.noPain && (state.score >= 4 || state.trend === "悪くなった")
         ? "入力ありがとうございました。負担が強い可能性があります。必要に応じて早めの相談を検討してください。"
         : "入力ありがとうございました。内容は現場改善と再発防止に活用されます。";
 
