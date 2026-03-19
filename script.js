@@ -207,6 +207,11 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
       return;
     }
 
+    if (!liff.isLoggedIn()) {
+      alert("LINEからもう一度開き直してください");
+      return;
+    }
+
     await liff.sendMessages([
       {
         type: "text",
@@ -245,12 +250,10 @@ document.getElementById("closeBtn").addEventListener("click", () => {
 async function initLiff() {
   try {
     await liff.init({ liffId: LIFF_ID });
-
-    if (!liff.isInClient()) {
-      console.log("Opened outside LINE client");
-    }
-
-    console.log("LIFF init success");
+    console.log("LIFF init success", {
+      inClient: liff.isInClient(),
+      loggedIn: liff.isLoggedIn()
+    });
   } catch (error) {
     console.error("LIFF init error:", error);
   }
