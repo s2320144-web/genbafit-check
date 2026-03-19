@@ -1,19 +1,36 @@
-const LIFF_ID = "2009527083-GI7XhhzG";
+const LIFF_ID = "YOUR_EXACT_LIFF_ID_HERE";
 
 async function initLiff() {
-  try {
-    await liff.init({ liffId: LIFF_ID });
+  const statusEl = document.getElementById("status");
 
-    // 未ログインならログイン
-    if (!liff.isLoggedIn()) {
-      liff.login();
+  try {
+    if (typeof liff === "undefined") {
+      statusEl.className = "status ng";
+      statusEl.textContent = "LIFF SDKが読み込まれていません";
       return;
     }
 
-    document.getElementById("status").innerText = "ログイン成功";
+    await liff.init({ liffId: LIFF_ID });
 
-  } catch (e) {
-    alert("LIFF初期化エラー: " + JSON.stringify(e));
+    statusEl.className = "status ok";
+    statusEl.textContent =
+      "LIFF init success\n" +
+      "LIFF ID: " + LIFF_ID + "\n" +
+      "URL: " + location.href + "\n" +
+      "isInClient: " + liff.isInClient() + "\n" +
+      "isLoggedIn: " + liff.isLoggedIn();
+
+  } catch (error) {
+    const code = error?.code || "no_code";
+    const message = error?.message || String(error);
+
+    statusEl.className = "status ng";
+    statusEl.textContent =
+      "LIFF初期化エラー\n" +
+      "code: " + code + "\n" +
+      "message: " + message + "\n" +
+      "LIFF ID: " + LIFF_ID + "\n" +
+      "URL: " + location.href;
   }
 }
 
