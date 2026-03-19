@@ -1,5 +1,24 @@
 const LIFF_ID = "2009527083-GI7XhhzG";
 
+async function initLiff() {
+  try {
+    await liff.init({ liffId: LIFF_ID });
+
+    // 🔥ここが重要
+    if (!liff.isLoggedIn()) {
+      liff.login();
+      return;
+    }
+
+    console.log("ログイン済み");
+  } catch (e) {
+    alert("LIFF初期化エラー: " + e);
+  }
+}
+
+// ページ読み込み時
+window.onload = initLiff;const LIFF_ID = "2009527083-GI7XhhzG";
+
 const state = {
   step: 1,
   noPain: false,
