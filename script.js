@@ -69,23 +69,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     clearSelected(partBtns);
   }
 
+  // STEP1: 特にない
   noPainBtn.addEventListener("click", () => {
     resetPart();
+
     state.noPain = true;
     state.part = "特にない";
     state.otherPart = "";
+    state.score = null;
+
     otherPartInput.value = "";
     otherPartWrap.classList.add("hidden");
+
     noPainBtn.classList.add("selected");
     toStep2.disabled = false;
   });
 
+  // STEP1: 部位
   partBtns.forEach(btn => {
     btn.addEventListener("click", () => {
       resetPart();
+
       const val = btn.dataset.value;
       state.noPain = false;
       state.part = val;
+
       btn.classList.add("selected");
 
       if (val === "その他") {
@@ -107,29 +115,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
+  // STEP1 → 次へ
   toStep2.addEventListener("click", () => {
     if (!state.part) return;
 
+    // 特にない のときは STEP2 を飛ばして STEP3 へ
     if (state.noPain) {
-      state.score = null;
-      state.trend = "";
-      teamInput.value = "";
-      state.team = "";
-      showStep(4);
+      showStep(3);
     } else {
       showStep(2);
     }
   });
 
+  // STEP2: スコア（絵文字つき）
   scoreWrap.innerHTML = "";
-  [1, 2, 3, 4, 5].forEach(n => {
+  const scoreList = [
+    { value: 1, emoji: "🙂" },
+    { value: 2, emoji: "😐" },
+    { value: 3, emoji: "😣" },
+    { value: 4, emoji: "😖" },
+    { value: 5, emoji: "😭" }
+  ];
+
+  scoreList.forEach(item => {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "option-btn large";
-    btn.textContent = String(n);
+    btn.innerHTML = `<div style="font-size:28px; line-height:1;">${item.emoji}</div><div style="margin-top:6px;">${item.value}</div>`;
 
     btn.addEventListener("click", () => {
-      state.score = n;
+      state.score = item.value;
       clearSelected([...scoreWrap.querySelectorAll(".option-btn")]);
       btn.classList.add("selected");
       toStep3.disabled = false;
@@ -143,6 +158,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     showStep(3);
   });
 
+  // STEP3: 前週比
   trendBtns.forEach(btn => {
     btn.addEventListener("click", () => {
       state.trend = btn.dataset.value;
@@ -161,6 +177,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     showStep(4);
   });
 
+  // STEP4: 作業
   workBtns.forEach(btn => {
     btn.addEventListener("click", () => {
       const val = btn.dataset.value;
@@ -196,7 +213,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const partText = state.noPain ? "特にない" : textValue(state.part, state.otherPart);
     const scoreText = state.noPain ? "なし" : String(state.score);
-    const trendText = state.noPain ? "なし" : (state.trend || "未入力");
+    const trendText = state.trend || "未入力";
     const teamText = state.team || "未入力";
     const workText = textValue(state.work, state.otherWork);
     const memoText = state.memo || "なし";
@@ -211,6 +228,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     showStep(5);
   });
 
+  // 戻る
   document.querySelectorAll(".back").forEach(btn => {
     btn.addEventListener("click", () => {
       const backTo = Number(btn.dataset.back);
@@ -218,15 +236,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
+  // 送信
   submitBtn.addEventListener("click", async () => {
     const partText = state.noPain ? "特にない" : textValue(state.part, state.otherPart);
     const scoreText = state.noPain ? "なし" : `${state.score}/5`;
-    const trendText = state.noPain ? "なし" : (state.trend || "未入力");
+    const trendText = state.trend || "未入力";
     const teamText = state.team || "未入力";
     const workText = textValue(state.work, state.otherWork);
     const memoText = state.memo || "なし";
 
-    const resultMessage =
+    const payloadBase = {
+      part: partText,
+      score: scoreText,
+      trend: trendText,
+      team: teamText,
+      work: workText,
+      memo: memoText
+    };
+
+    try {
+      let payload = payloadBase;
+
+      if (typeof liff !== "undefined" && liff.isLoggedIn()) {
+        const profile = await liff.getProfile();
+        payload = {
+          name: profile.displayName || "",
+          userId: profile.userId || "",
+          ...payloadBase
+        };
+
+        if (liff.isInClient()) {
+          const resultMessage =
 `【現場fit チェック】
 部位：${partText}
 痛み：${scoreText}
@@ -235,66 +275,34 @@ document.addEventListener("DOMContentLoaded", async () => {
 作業：${workText}
 補足：${memoText}`;
 
-    try {
-      if (typeof liff !== "undefined" && liff.isInClient() && liff.isLoggedIn()) {
-        const profile = await liff.getProfile();
-
-        await liff.sendMessages([
-          {
-            type: "text",
-            text: resultMessage
-          }
-        ]);
-
-        const payload = {
-          name: profile.displayName || "",
-          userId: profile.userId || "",
-          part: partText,
-          score: scoreText,
-          trend: trendText,
-          team: teamText,
-          work: workText,
-          memo: memoText
-        };
-
-        const res = await fetch(GAS_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-          },
-          body: JSON.stringify(payload)
-        });
-
-        const text = await res.text();
-        console.log("GAS response:", text);
+          await liff.sendMessages([
+            {
+              type: "text",
+              text: resultMessage
+            }
+          ]);
+        }
       } else {
-        const payload = {
+        payload = {
           name: "",
           userId: "",
-          part: partText,
-          score: scoreText,
-          trend: trendText,
-          team: teamText,
-          work: workText,
-          memo: memoText
+          ...payloadBase
         };
-
-        const res = await fetch(GAS_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-          },
-          body: JSON.stringify(payload)
-        });
-
-        const text = await res.text();
-        console.log("GAS response:", text);
       }
 
+      const res = await fetch(GAS_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const text = await res.text();
+      console.log("GAS response:", text);
+
       document.getElementById("doneMessage").textContent =
-        !state.noPain && (state.score >= 4 || state.trend === "悪くなった")
-          ? "入力ありがとうございました。負担が強い可能性があります。必要に応じて早めの相談を検討してください。"
-          : "入力ありがとうございました。内容は現場改善と再発防止に活用されます。";
+        "入力ありがとうございました。内容は現場改善と再発防止に活用されます。";
 
       document.getElementById("doneSummary").innerHTML =
         `部位：${partText}<br>
