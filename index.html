@@ -1,191 +1,414 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>現場fit チェック</title>
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="app">
-    <header class="header">
-      <div class="header-top">
-        <div class="header-title">現場fit チェック</div>
-        <div class="header-icons">
-          <span>🔔</span>
-          <span>⋯</span>
-        </div>
-      </div>
+const LIFF_ID = "2009527083-MXJru0ta";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxMlM_BEO9XzvRZDG7M8_uiqLiIgnCRiBID7AQGUcrrgL6zgSXKC7F8qzNDfV5b6a1ezw/exec";
+const state = {
+  step: 1,
+  noPain: false,
+  part: "",
+  otherPart: "",
+  score: null,
+  trend: "",
+  team: "",
+  work: "",
+  otherWork: "",
+  memo: ""
+};
 
-      <p class="header-desc">
-        腰・肩・膝などの違和感を早めに把握し、<br>
-        現場の作業改善につなげるための入力フォームです。
-      </p>
+const faceLevels = [
+  { value: 1, emoji: "🙂", label: "少し違和感" },
+  { value: 2, emoji: "😐", label: "気になる" },
+  { value: 3, emoji: "😣", label: "やや強い" },
+  { value: 4, emoji: "😖", label: "強い" },
+  { value: 5, emoji: "😭", label: "かなり強い" }
+];
 
-      <div class="header-pills">
-        <span class="pill">LINEミニアプリ</span>
-        <span class="pill">20〜30秒入力</span>
-        <span class="pill">再発防止</span>
-      </div>
-    </header>
+function textValue(v, other) {
+  return v === "その他" ? (other || "その他") : v;
+}
 
-    <main class="screen">
-      <!-- STEP1 -->
-      <section class="card" id="step1">
-        <div class="step-badge">STEP 1</div>
-        <h2 class="section-title">違和感がある部位</h2>
-        <p class="section-desc">一番近い部位を1つ選んでください。</p>
+function showStep(step) {
+  state.step = step;
+  ["step1", "step2", "step3", "step4", "step5", "done"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add("hidden");
+  });
 
-        <button class="option-btn full-btn" id="noPainBtn" type="button">特にない</button>
+  const targetId = step === 6 ? "done" : `step${step}`;
+  const target = document.getElementById(targetId);
+  if (target) target.classList.remove("hidden");
+}
 
-        <div class="grid grid-2" id="partOptions">
-          <button class="option-btn large" type="button" data-value="腰">腰</button>
-          <button class="option-btn large" type="button" data-value="肩">肩</button>
-          <button class="option-btn large" type="button" data-value="膝">膝</button>
-          <button class="option-btn large" type="button" data-value="その他">その他</button>
-        </div>
+function updateStep1() {
+  document.querySelectorAll("#partOptions .option-btn").forEach(btn => {
+    btn.classList.toggle("selected", btn.dataset.value === state.part && !state.noPain);
+  });
 
-        <div class="field hidden" id="otherPartWrap">
-          <label class="label" for="otherPart">その他の部位</label>
-          <input id="otherPart" type="text" placeholder="例：首、肘、手首など">
-        </div>
+  const noPainBtn = document.getElementById("noPainBtn");
+  if (noPainBtn) {
+    noPainBtn.classList.toggle("selected", state.noPain);
+  }
 
-        <div class="actions">
-          <button class="btn btn-primary" id="toStep2" type="button" disabled>次へ</button>
-        </div>
-      </section>
+  const otherPartWrap = document.getElementById("otherPartWrap");
+  if (otherPartWrap) {
+    otherPartWrap.classList.toggle(
+      "hidden",
+      !(state.part === "その他" && !state.noPain)
+    );
+  }
 
-      <!-- STEP2 -->
-      <section class="card hidden" id="step2">
-        <div class="step-badge">STEP 2</div>
-        <h2 class="section-title">痛みの強さ</h2>
-        <p class="section-desc">一番近い状態を選んでください。</p>
+  const toStep2 = document.getElementById("toStep2");
+  if (toStep2) {
+    toStep2.disabled =
+      !(state.noPain || (!!state.part && (state.part !== "その他" || !!state.otherPart.trim())));
+  }
+}
 
-        <div class="faces" id="scoreOptions"></div>
+function updateStep2() {
+  document.querySelectorAll(".face-btn").forEach(btn => {
+    btn.classList.toggle("selected", Number(btn.dataset.value) === state.score);
+  });
 
-        <div class="actions">
-          <button class="btn btn-secondary back" type="button" data-back="1">戻る</button>
-          <button class="btn btn-primary" id="toStep3" type="button" disabled>次へ</button>
-        </div>
-      </section>
+  const toStep3 = document.getElementById("toStep3");
+  if (toStep3) {
+    toStep3.disabled = state.score === null;
+  }
+}
 
-      <!-- STEP3 -->
-      <section class="card hidden" id="step3">
-        <div class="step-badge">STEP 3</div>
-        <h2 class="section-title">前週との比較</h2>
-        <p class="section-desc">先週と比べてどうでしたか？</p>
+function updateStep3() {
+  document.querySelectorAll("#trendOptions .option-btn").forEach(btn => {
+    btn.classList.toggle("selected", btn.dataset.value === state.trend);
+  });
 
-        <div class="grid" id="trendOptions">
-          <button class="option-btn" type="button" data-value="良くなった">良くなった</button>
-          <button class="option-btn" type="button" data-value="変わらない">変わらない</button>
-          <button class="option-btn" type="button" data-value="悪くなった">悪くなった</button>
-        </div>
+  const toStep4 = document.getElementById("toStep4");
+  if (toStep4) {
+    toStep4.disabled = !state.trend;
+  }
+}
 
-        <div class="field">
-          <label class="label" for="team">班・工区（任意）</label>
-          <input id="team" type="text" placeholder="例：A班、2工区など">
-        </div>
+function updateStep4() {
+  document.querySelectorAll("#workOptions .option-btn").forEach(btn => {
+    btn.classList.toggle("selected", btn.dataset.value === state.work);
+  });
 
-        <div class="actions">
-          <button class="btn btn-secondary back" type="button" data-back="1">戻る</button>
-          <button class="btn btn-primary" id="toStep4" type="button" disabled>次へ</button>
-        </div>
-      </section>
+  const otherWorkWrap = document.getElementById("otherWorkWrap");
+  if (otherWorkWrap) {
+    otherWorkWrap.classList.toggle("hidden", state.work !== "その他");
+  }
 
-      <!-- STEP4 -->
-      <section class="card hidden" id="step4">
-        <div class="step-badge">STEP 4</div>
-        <h2 class="section-title">原因と思われる作業</h2>
-        <p class="section-desc">一番近い作業を選んでください。</p>
+  const toStep5 = document.getElementById("toStep5");
+  if (toStep5) {
+    toStep5.disabled =
+      !(!!state.work && (state.work !== "その他" || !!state.otherWork.trim()));
+  }
+}
 
-        <div class="grid grid-2" id="workOptions">
-          <button class="option-btn" type="button" data-value="中腰作業">中腰作業</button>
-          <button class="option-btn" type="button" data-value="重量物">重量物</button>
-          <button class="option-btn" type="button" data-value="高所作業">高所作業</button>
-          <button class="option-btn" type="button" data-value="ねじり動作">ねじり動作</button>
-          <button class="option-btn" type="button" data-value="長時間立ち作業">長時間立ち作業</button>
-          <button class="option-btn" type="button" data-value="その他">その他</button>
-        </div>
+function updateConfirm() {
+  const confirmPart = document.getElementById("confirmPart");
+  const confirmScore = document.getElementById("confirmScore");
+  const confirmTrend = document.getElementById("confirmTrend");
+  const confirmTeam = document.getElementById("confirmTeam");
+  const confirmWork = document.getElementById("confirmWork");
+  const confirmMemo = document.getElementById("confirmMemo");
 
-        <div class="field hidden" id="otherWorkWrap">
-          <label class="label" for="otherWork">その他の作業</label>
-          <input id="otherWork" type="text" placeholder="例：脚立昇降、運搬の繰り返しなど">
-        </div>
+  if (confirmPart) {
+    confirmPart.textContent = state.noPain ? "特にない" : textValue(state.part, state.otherPart);
+  }
 
-        <div class="field">
-          <label class="label" for="memo">補足メモ（任意）</label>
-          <textarea id="memo" rows="4" placeholder="補足があれば入力してください"></textarea>
-        </div>
+  if (confirmScore) {
+    confirmScore.textContent = state.noPain ? "なし" : `${state.score}/5`;
+  }
 
-        <div class="actions">
-          <button class="btn btn-secondary back" type="button" data-back="3">戻る</button>
-          <button class="btn btn-primary" id="toStep5" type="button" disabled>次へ</button>
-        </div>
-      </section>
+  if (confirmTrend) {
+    confirmTrend.textContent = state.trend || "未入力";
+  }
 
-      <!-- STEP5 -->
-      <section class="card hidden" id="step5">
-        <div class="step-badge">STEP 5</div>
-        <h2 class="section-title">入力内容の確認</h2>
-        <p class="section-desc">この内容で送信します。</p>
+  if (confirmTeam) {
+    confirmTeam.textContent = state.team || "未入力";
+  }
 
-        <div class="summary">
-          <div class="summary-box">
-            <div class="summary-label">部位</div>
-            <div class="summary-value" id="confirmPart"></div>
-          </div>
+  if (confirmWork) {
+    confirmWork.textContent = textValue(state.work, state.otherWork);
+  }
 
-          <div class="summary-box">
-            <div class="summary-label">痛みの強さ</div>
-            <div class="summary-value" id="confirmScore"></div>
-          </div>
+  if (confirmMemo) {
+    confirmMemo.textContent = state.memo || "なし";
+  }
+}
 
-          <div class="summary-box">
-            <div class="summary-label">前週比</div>
-            <div class="summary-value" id="confirmTrend"></div>
-          </div>
+function createScoreButtons() {
+  const wrap = document.getElementById("scoreOptions");
+  if (!wrap) return;
 
-          <div class="summary-box">
-            <div class="summary-label">班・工区</div>
-            <div class="summary-value" id="confirmTeam"></div>
-          </div>
+  wrap.innerHTML = "";
 
-          <div class="summary-box">
-            <div class="summary-label">作業</div>
-            <div class="summary-value" id="confirmWork"></div>
-          </div>
+  faceLevels.forEach(item => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "face-btn";
+    btn.dataset.value = item.value;
+    btn.innerHTML = `
+      <div class="emoji">${item.emoji}</div>
+      <div class="face-label">${item.label}</div>
+      <div class="face-score">${item.value}</div>
+    `;
 
-          <div class="summary-box">
-            <div class="summary-label">補足</div>
-            <div class="summary-value" id="confirmMemo"></div>
-          </div>
-        </div>
+    btn.addEventListener("click", () => {
+      state.score = item.value;
+      updateStep2();
+    });
 
-        <div class="notice">
-          入力内容は、現場の作業改善と再発防止のために活用されます。
-        </div>
+    wrap.appendChild(btn);
+  });
+}
 
-        <div class="actions">
-          <button class="btn btn-secondary back" type="button" data-back="4">戻る</button>
-          <button class="btn btn-primary" id="submitBtn" type="button">送信する</button>
-        </div>
-      </section>
+function bindEvents() {
+  document.querySelectorAll("#partOptions .option-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.noPain = false;
+      state.part = btn.dataset.value;
+      state.score = null;
 
-      <!-- DONE -->
-      <section class="card hidden" id="done">
-        <div class="step-badge">完了</div>
-        <h2 class="section-title">送信が完了しました</h2>
-        <p class="section-desc" id="doneMessage"></p>
-        <div class="notice" id="doneSummary"></div>
+      if (state.part !== "その他") {
+        state.otherPart = "";
+        const otherPartInput = document.getElementById("otherPart");
+        if (otherPartInput) otherPartInput.value = "";
+      }
 
-        <div class="actions">
-          <button class="btn btn-primary" id="closeBtn" type="button">閉じる</button>
-        </div>
-      </section>
-    </main>
-  </div>
+      updateStep1();
+    });
+  });
 
-  <script src="script.js"></script>
-</body>
-</html>
+  const noPainBtn = document.getElementById("noPainBtn");
+  if (noPainBtn) {
+    noPainBtn.addEventListener("click", () => {
+      state.noPain = true;
+      state.part = "";
+      state.otherPart = "";
+      state.score = null;
+      state.trend = "";
+      updateStep1();
+    });
+  }
+
+  const otherPartInput = document.getElementById("otherPart");
+  if (otherPartInput) {
+    otherPartInput.addEventListener("input", e => {
+      state.otherPart = e.target.value;
+      updateStep1();
+    });
+  }
+
+  const toStep2 = document.getElementById("toStep2");
+  if (toStep2) {
+    toStep2.addEventListener("click", () => {
+      if (state.noPain) {
+        showStep(3);
+      } else {
+        showStep(2);
+      }
+    });
+  }
+
+  const toStep3 = document.getElementById("toStep3");
+  if (toStep3) {
+    toStep3.addEventListener("click", () => {
+      showStep(3);
+    });
+  }
+
+  document.querySelectorAll("#trendOptions .option-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.trend = btn.dataset.value;
+      updateStep3();
+    });
+  });
+
+  const teamInput = document.getElementById("team");
+  if (teamInput) {
+    teamInput.addEventListener("input", e => {
+      state.team = e.target.value;
+    });
+  }
+
+  const toStep4 = document.getElementById("toStep4");
+  if (toStep4) {
+    toStep4.addEventListener("click", () => {
+      showStep(4);
+    });
+  }
+
+  document.querySelectorAll("#workOptions .option-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.work = btn.dataset.value;
+
+      if (state.work !== "その他") {
+        state.otherWork = "";
+        const otherWorkInput = document.getElementById("otherWork");
+        if (otherWorkInput) otherWorkInput.value = "";
+      }
+
+      updateStep4();
+    });
+  });
+
+  const otherWorkInput = document.getElementById("otherWork");
+  if (otherWorkInput) {
+    otherWorkInput.addEventListener("input", e => {
+      state.otherWork = e.target.value;
+      updateStep4();
+    });
+  }
+
+  const memoInput = document.getElementById("memo");
+  if (memoInput) {
+    memoInput.addEventListener("input", e => {
+      state.memo = e.target.value;
+    });
+  }
+
+  const toStep5 = document.getElementById("toStep5");
+  if (toStep5) {
+    toStep5.addEventListener("click", () => {
+      updateConfirm();
+      showStep(5);
+    });
+  }
+
+  document.querySelectorAll(".back").forEach(btn => {
+    btn.addEventListener("click", () => {
+      showStep(Number(btn.dataset.back));
+    });
+  });
+
+  const submitBtn = document.getElementById("submitBtn");
+  if (submitBtn) {
+    submitBtn.addEventListener("click", async () => {
+      const partText = state.noPain ? "特にない" : textValue(state.part, state.otherPart);
+      const scoreText = state.noPain ? "なし" : `${state.score}/5`;
+      const trendText = state.trend || "未入力";
+      const teamText = state.team || "未入力";
+      const workText = textValue(state.work, state.otherWork);
+      const memoText = state.memo || "なし";
+
+      const resultMessage =
+`【現場fit チェック】
+部位：${partText}
+痛み：${scoreText}
+前週比：${trendText}
+班・工区：${teamText}
+作業：${workText}
+補足：${memoText}`;
+
+      try {
+        if (typeof liff === "undefined") {
+          alert("LIFFが読み込まれていません");
+          return;
+        }
+
+        if (!liff.isInClient()) {
+          alert("LINEアプリ内で開いてください");
+          return;
+        }
+
+        if (!liff.isLoggedIn()) {
+          alert("LINEからもう一度開き直してください");
+          return;
+        }
+
+        const profile = await liff.getProfile();
+
+        await liff.sendMessages([
+          {
+            type: "text",
+            text: resultMessage
+          }
+        ]);
+
+        const res = await fetch(GAS_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify({
+            name: profile.displayName || "",
+            userId: profile.userId || "",
+            part: partText,
+            score: scoreText,
+            trend: trendText,
+            team: teamText,
+            work: workText,
+            memo: memoText
+          })
+        });
+
+        const text = await res.text();
+        console.log("GAS response:", text);
+
+        const doneMessage = document.getElementById("doneMessage");
+        if (doneMessage) {
+          doneMessage.textContent =
+            !state.noPain && (state.score >= 4 || state.trend === "悪くなった")
+              ? "入力ありがとうございました。負担が強い可能性があります。必要に応じて早めの相談を検討してください。"
+              : "入力ありがとうございました。内容は現場改善と再発防止に活用されます。";
+        }
+
+        const doneSummary = document.getElementById("doneSummary");
+        if (doneSummary) {
+          doneSummary.innerHTML =
+            `部位：${partText}<br>
+             痛み：${scoreText}<br>
+             前週比：${trendText}<br>
+             班・工区：${teamText}<br>
+             作業：${workText}<br>
+             補足：${memoText}`;
+        }
+
+        showStep(6);
+      } catch (error) {
+        console.error("送信エラー:", error);
+        alert("送信に失敗しました: " + (error.message || JSON.stringify(error)));
+      }
+    });
+  }
+
+  const closeBtn = document.getElementById("closeBtn");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
+      if (typeof liff !== "undefined" && liff.isInClient()) {
+        liff.closeWindow();
+      } else {
+        showStep(1);
+      }
+    });
+  }
+}
+
+async function initLiff() {
+  try {
+    if (typeof liff === "undefined") {
+      alert("LIFF SDKが読み込まれていません");
+      return;
+    }
+
+    await liff.init({ liffId: LIFF_ID });
+
+    console.log("LIFF init success", {
+      inClient: liff.isInClient(),
+      loggedIn: liff.isLoggedIn(),
+      url: location.href
+    });
+  } catch (error) {
+    console.error("LIFF init error:", error);
+    alert("LIFF初期化エラー: " + (error.message || JSON.stringify(error)));
+  }
+}
+
+window.onload = async function () {
+  createScoreButtons();
+  bindEvents();
+  updateStep1();
+  updateStep2();
+  updateStep3();
+  updateStep4();
+  showStep(1);
+  await initLiff();
+};
