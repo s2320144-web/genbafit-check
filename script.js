@@ -20,8 +20,7 @@ const faceLevels = [
   { value: 3, emoji: "😣", label: "やや強い" },
   { value: 4, emoji: "😖", label: "強い" },
   { value: 5, emoji: "😭", label: "かなり強い" }
-];
-function textValue(v, other) {
+];function textValue(v, other) {
   return v === "その他" ? (other || "その他") : v;
 }
 
