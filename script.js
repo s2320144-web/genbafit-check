@@ -1,6 +1,5 @@
 const LIFF_ID = "2009527083-MXJru0ta";
 const GAS_URL = "https://script.google.com/macros/s/AKfycbztks-u7TVo3asv7hbYk8YFtge_n2P8TOvDEQ2hohDE_h2NoBMYuxt26YbVxIk4tAFuMA/exec";
-
 const state = {
   step: 1,
   noPain: false,
