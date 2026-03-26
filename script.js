@@ -102,3 +102,22 @@ document.getElementById("submitBtn").addEventListener("click", async () => {
     alert("送信に失敗しました: " + (error.message || JSON.stringify(error)));
   }
 });
+// 部位選択（STEP1）
+const partButtons = document.querySelectorAll("[data-part]");
+const nextBtn = document.getElementById("nextBtn");
+
+partButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const value = btn.dataset.part;
+
+    state.noPain = value === "特にない";
+    state.part = value;
+
+    // 見た目の選択状態
+    partButtons.forEach((b) => b.classList.remove("selected"));
+    btn.classList.add("selected");
+
+    // 次へボタン有効化
+    nextBtn.disabled = false;
+  });
+});
