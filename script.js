@@ -1,5 +1,8 @@
 const LIFF_ID = "2009527083-MXJru0ta";
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxMlM_BEO9XzvRZDG7M8_uiqLiIgnCRiBID7AQGUcrrgL6zgSXKC7F8qzNDfV5b6a1ezw/exec";  step: 1,
+const GAS_URL = "https://script.google.com/macros/s/AKfycbztks-u7TVo3asv7hbYk8YFtge_n2P8T0vDEQ2hohDE_h2NoBMYuxt26YbVxIk4tAFuMA/exec";
+
+const state = {
+  step: 1,
   noPain: false,
   part: "",
   otherPart: "",
@@ -18,7 +21,6 @@ const faceLevels = [
   { value: 4, emoji: "😖", label: "強い" },
   { value: 5, emoji: "😭", label: "かなり強い" }
 ];
-
 function textValue(v, other) {
   return v === "その他" ? (other || "その他") : v;
 }
