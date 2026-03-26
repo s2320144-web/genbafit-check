@@ -1,28 +1,27 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>現場fit チェック</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="app">
     <header class="header">
       <div class="header-top">
-        <div class="header-title-wrap">
-          <h1 class="header-title">現場fit チェック</h1>
-          <p class="header-desc">
-            腰・肩・膝などの違和感を早めに把握し、<br />
-            現場の作業改善につなげるための入力フォームです。
-          </p>
-        </div>
+        <div class="header-title">現場fit チェック</div>
         <div class="header-icons">
           <span>🔔</span>
           <span>⋯</span>
         </div>
       </div>
+
+      <p class="header-desc">
+        腰・肩・膝などの違和感を早めに把握し、<br>
+        現場の作業改善につなげるための入力フォームです。
+      </p>
 
       <div class="header-pills">
         <span class="pill">LINEミニアプリ</span>
@@ -32,7 +31,7 @@
     </header>
 
     <main class="screen">
-      <!-- STEP 1 -->
+      <!-- STEP1 -->
       <section class="card" id="step1">
         <div class="step-badge">STEP 1</div>
         <h2 class="section-title">違和感がある部位</h2>
@@ -49,7 +48,7 @@
 
         <div class="field hidden" id="otherPartWrap">
           <label class="label" for="otherPart">その他の部位</label>
-          <input id="otherPart" type="text" placeholder="例：首、肘、手首など" />
+          <input id="otherPart" type="text" placeholder="例：首、肘、手首など">
         </div>
 
         <div class="actions">
@@ -57,7 +56,7 @@
         </div>
       </section>
 
-      <!-- STEP 2 -->
+      <!-- STEP2 -->
       <section class="card hidden" id="step2">
         <div class="step-badge">STEP 2</div>
         <h2 class="section-title">痛みの強さ</h2>
@@ -71,21 +70,21 @@
         </div>
       </section>
 
-      <!-- STEP 3 -->
+      <!-- STEP3 -->
       <section class="card hidden" id="step3">
         <div class="step-badge">STEP 3</div>
         <h2 class="section-title">前週との比較</h2>
         <p class="section-desc">先週と比べてどうでしたか？</p>
 
-        <div class="grid grid-3" id="trendOptions">
-          <button class="option-btn medium" type="button" data-value="良くなった">良くなった</button>
-          <button class="option-btn medium" type="button" data-value="変わらない">変わらない</button>
-          <button class="option-btn medium" type="button" data-value="悪くなった">悪くなった</button>
+        <div class="grid" id="trendOptions">
+          <button class="option-btn" type="button" data-value="良くなった">良くなった</button>
+          <button class="option-btn" type="button" data-value="変わらない">変わらない</button>
+          <button class="option-btn" type="button" data-value="悪くなった">悪くなった</button>
         </div>
 
         <div class="field">
           <label class="label" for="team">班・工区（任意）</label>
-          <input id="team" type="text" placeholder="例：A班、2工区など" />
+          <input id="team" type="text" placeholder="例：A班、2工区など">
         </div>
 
         <div class="actions">
@@ -94,24 +93,24 @@
         </div>
       </section>
 
-      <!-- STEP 4 -->
+      <!-- STEP4 -->
       <section class="card hidden" id="step4">
         <div class="step-badge">STEP 4</div>
         <h2 class="section-title">原因と思われる作業</h2>
         <p class="section-desc">一番近い作業を選んでください。</p>
 
         <div class="grid grid-2" id="workOptions">
-          <button class="option-btn medium" type="button" data-value="中腰作業">中腰作業</button>
-          <button class="option-btn medium" type="button" data-value="重量物">重量物</button>
-          <button class="option-btn medium" type="button" data-value="高所作業">高所作業</button>
-          <button class="option-btn medium" type="button" data-value="ねじり動作">ねじり動作</button>
-          <button class="option-btn medium" type="button" data-value="長時間立ち作業">長時間立ち作業</button>
-          <button class="option-btn medium" type="button" data-value="その他">その他</button>
+          <button class="option-btn" type="button" data-value="中腰作業">中腰作業</button>
+          <button class="option-btn" type="button" data-value="重量物">重量物</button>
+          <button class="option-btn" type="button" data-value="高所作業">高所作業</button>
+          <button class="option-btn" type="button" data-value="ねじり動作">ねじり動作</button>
+          <button class="option-btn" type="button" data-value="長時間立ち作業">長時間立ち作業</button>
+          <button class="option-btn" type="button" data-value="その他">その他</button>
         </div>
 
         <div class="field hidden" id="otherWorkWrap">
           <label class="label" for="otherWork">その他の作業</label>
-          <input id="otherWork" type="text" placeholder="例：脚立昇降、運搬の繰り返しなど" />
+          <input id="otherWork" type="text" placeholder="例：脚立昇降、運搬の繰り返しなど">
         </div>
 
         <div class="field">
@@ -125,7 +124,7 @@
         </div>
       </section>
 
-      <!-- STEP 5 -->
+      <!-- STEP5 -->
       <section class="card hidden" id="step5">
         <div class="step-badge">STEP 5</div>
         <h2 class="section-title">入力内容の確認</h2>
@@ -136,22 +135,27 @@
             <div class="summary-label">部位</div>
             <div class="summary-value" id="confirmPart"></div>
           </div>
+
           <div class="summary-box">
             <div class="summary-label">痛みの強さ</div>
             <div class="summary-value" id="confirmScore"></div>
           </div>
+
           <div class="summary-box">
             <div class="summary-label">前週比</div>
             <div class="summary-value" id="confirmTrend"></div>
           </div>
+
           <div class="summary-box">
             <div class="summary-label">班・工区</div>
             <div class="summary-value" id="confirmTeam"></div>
           </div>
+
           <div class="summary-box">
             <div class="summary-label">作業</div>
             <div class="summary-value" id="confirmWork"></div>
           </div>
+
           <div class="summary-box">
             <div class="summary-label">補足</div>
             <div class="summary-value" id="confirmMemo"></div>
@@ -168,12 +172,13 @@
         </div>
       </section>
 
-      <!-- 完了 -->
+      <!-- DONE -->
       <section class="card hidden" id="done">
         <div class="step-badge">完了</div>
         <h2 class="section-title">送信が完了しました</h2>
         <p class="section-desc" id="doneMessage"></p>
         <div class="notice" id="doneSummary"></div>
+
         <div class="actions">
           <button class="btn btn-primary" id="closeBtn" type="button">閉じる</button>
         </div>
