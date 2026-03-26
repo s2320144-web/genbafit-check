@@ -1,7 +1,5 @@
 const LIFF_ID = "2009527083-MXJru0ta";
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwkYyPLyzw9p_g6fVOCvuK74SzVJ3evPHOmZ1sxDtCyM2X9c85fUz3MkIxpclcpid9DTw/exec";
-
-const state = {
+const GAS_URL = https://script.google.com/macros/s/AKfycbyARoNjpoWT7Df53JBwrihRUNUxLsBk4rJy0yFBNO0k1oQfjP4AZRgvHz7YI7CD2b_K-Q/execconst state = {
   step: 1,
   noPain: false,
   part: "",
