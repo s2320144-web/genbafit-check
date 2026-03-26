@@ -1,186 +1,198 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>現場fit チェック</title>
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>現場fit チェック</title>
+
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+<style>
+body {
+  margin:0;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  background:#f5f5f5;
+}
+
+.header {
+  background:#1f8f4e;
+  color:white;
+  padding:20px;
+}
+
+.container {
+  padding:20px;
+}
+
+.card {
+  background:white;
+  border-radius:20px;
+  padding:20px;
+  margin-top:20px;
+}
+
+.btn {
+  width:100%;
+  padding:15px;
+  border-radius:12px;
+  border:none;
+  font-size:16px;
+  margin-top:10px;
+}
+
+.primary {
+  background:#1f8f4e;
+  color:white;
+}
+
+.option {
+  padding:12px;
+  border:1px solid #ccc;
+  border-radius:12px;
+  text-align:center;
+  margin:5px;
+}
+
+.selected {
+  background:#1f8f4e;
+  color:white;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+}
+</style>
 </head>
+
 <body>
-  <div class="app">
-    <header class="header">
-      <div class="header-top">
-        <div>
-          <h1 class="header-title">現場fit チェック</h1>
-          <p class="header-desc">
-            腰・肩・膝などの違和感を早めに把握し、<br />
-            現場の作業改善につなげるための入力フォームです。
-          </p>
-        </div>
-        <div class="header-icons">
-          <span>🔔</span>
-          <span>⋯</span>
-        </div>
-      </div>
 
-      <div class="header-pills">
-        <span class="pill">LINEミニアプリ</span>
-        <span class="pill">20〜30秒入力</span>
-        <span class="pill">再発防止</span>
-      </div>
-    </header>
+<div class="header">
+  <h2>現場fit チェック</h2>
+  <p>20秒で入力｜再発防止</p>
+</div>
 
-    <main class="screen">
-      <!-- STEP 1 -->
-      <section class="card" id="step1">
-        <div class="step-badge">STEP 1</div>
-        <h2 class="section-title">違和感がある部位</h2>
-        <p class="section-desc">一番近い部位を1つ選んでください。</p>
+<div class="container">
 
-        <button class="option-btn full-btn" id="noPainBtn" type="button">特にない</button>
+<!-- STEP1 -->
+<div class="card" id="step1">
+  <h3>違和感の部位</h3>
 
-        <div class="grid grid-2" id="partOptions">
-          <button class="option-btn large" type="button" data-value="腰">腰</button>
-          <button class="option-btn large" type="button" data-value="肩">肩</button>
-          <button class="option-btn large" type="button" data-value="膝">膝</button>
-          <button class="option-btn large" type="button" data-value="その他">その他</button>
-        </div>
+  <button class="btn" onclick="selectNoPain()">特にない</button>
 
-        <div class="field hidden" id="otherPartWrap">
-          <label class="label" for="otherPart">その他の部位</label>
-          <input id="otherPart" type="text" placeholder="例：首、肘、手首など" />
-        </div>
-
-        <div class="actions">
-          <button class="btn btn-primary" id="toStep2" type="button" disabled>次へ</button>
-        </div>
-      </section>
-
-      <!-- STEP 2 -->
-      <section class="card hidden" id="step2">
-        <div class="step-badge">STEP 2</div>
-        <h2 class="section-title">痛みの強さ</h2>
-        <p class="section-desc">一番近い状態を選んでください。</p>
-
-        <div class="faces" id="scoreOptions"></div>
-
-        <div class="actions">
-          <button class="btn btn-secondary back" type="button" data-back="1">戻る</button>
-          <button class="btn btn-primary" id="toStep3" type="button" disabled>次へ</button>
-        </div>
-      </section>
-
-      <!-- STEP 3 -->
-      <section class="card hidden" id="step3">
-        <div class="step-badge">STEP 3</div>
-        <h2 class="section-title">前週との比較</h2>
-        <p class="section-desc">先週と比べてどうでしたか？</p>
-
-        <div class="grid" id="trendOptions">
-          <button class="option-btn" type="button" data-value="良くなった">良くなった</button>
-          <button class="option-btn" type="button" data-value="変わらない">変わらない</button>
-          <button class="option-btn" type="button" data-value="悪くなった">悪くなった</button>
-        </div>
-
-        <div class="field">
-          <label class="label" for="team">班・工区（任意）</label>
-          <input id="team" type="text" placeholder="例：A班、2工区など" />
-        </div>
-
-        <div class="actions">
-          <button class="btn btn-secondary back" type="button" data-back="2">戻る</button>
-          <button class="btn btn-primary" id="toStep4" type="button" disabled>次へ</button>
-        </div>
-      </section>
-
-      <!-- STEP 4 -->
-      <section class="card hidden" id="step4">
-        <div class="step-badge">STEP 4</div>
-        <h2 class="section-title">原因と思われる作業</h2>
-        <p class="section-desc">一番近い作業を選んでください。</p>
-
-        <div class="grid grid-2" id="workOptions">
-          <button class="option-btn" type="button" data-value="中腰作業">中腰作業</button>
-          <button class="option-btn" type="button" data-value="重量物">重量物</button>
-          <button class="option-btn" type="button" data-value="高所作業">高所作業</button>
-          <button class="option-btn" type="button" data-value="ねじり動作">ねじり動作</button>
-          <button class="option-btn" type="button" data-value="長時間立ち作業">長時間立ち作業</button>
-          <button class="option-btn" type="button" data-value="その他">その他</button>
-        </div>
-
-        <div class="field hidden" id="otherWorkWrap">
-          <label class="label" for="otherWork">その他の作業</label>
-          <input id="otherWork" type="text" placeholder="例：脚立昇降、運搬の繰り返しなど" />
-        </div>
-
-        <div class="field">
-          <label class="label" for="memo">補足メモ（任意）</label>
-          <textarea id="memo" rows="4" placeholder="補足があれば入力してください"></textarea>
-        </div>
-
-        <div class="actions">
-          <button class="btn btn-secondary back" type="button" data-back="3">戻る</button>
-          <button class="btn btn-primary" id="toStep5" type="button" disabled>次へ</button>
-        </div>
-      </section>
-
-      <!-- STEP 5 -->
-      <section class="card hidden" id="step5">
-        <div class="step-badge">STEP 5</div>
-        <h2 class="section-title">入力内容の確認</h2>
-        <p class="section-desc">この内容で送信します。</p>
-
-        <div class="summary">
-          <div class="summary-box">
-            <div class="summary-label">部位</div>
-            <div class="summary-value" id="confirmPart"></div>
-          </div>
-          <div class="summary-box">
-            <div class="summary-label">痛みの強さ</div>
-            <div class="summary-value" id="confirmScore"></div>
-          </div>
-          <div class="summary-box">
-            <div class="summary-label">前週比</div>
-            <div class="summary-value" id="confirmTrend"></div>
-          </div>
-          <div class="summary-box">
-            <div class="summary-label">班・工区</div>
-            <div class="summary-value" id="confirmTeam"></div>
-          </div>
-          <div class="summary-box">
-            <div class="summary-label">作業</div>
-            <div class="summary-value" id="confirmWork"></div>
-          </div>
-          <div class="summary-box">
-            <div class="summary-label">補足</div>
-            <div class="summary-value" id="confirmMemo"></div>
-          </div>
-        </div>
-
-        <div class="notice">
-          入力内容は、現場の作業改善と再発防止のために活用されます。
-        </div>
-
-        <div class="actions">
-          <button class="btn btn-secondary back" type="button" data-back="4">戻る</button>
-          <button class="btn btn-primary" id="submitBtn" type="button">送信する</button>
-        </div>
-      </section>
-
-      <!-- DONE -->
-      <section class="card hidden" id="done">
-        <div class="step-badge">完了</div>
-        <h2 class="section-title">送信が完了しました</h2>
-        <p class="section-desc" id="doneMessage"></p>
-        <div class="notice" id="doneSummary"></div>
-        <div class="actions">
-          <button class="btn btn-primary" id="closeBtn" type="button">閉じる</button>
-        </div>
-      </section>
-    </main>
+  <div class="grid">
+    <div class="option" onclick="selectPart('腰')">腰</div>
+    <div class="option" onclick="selectPart('肩')">肩</div>
+    <div class="option" onclick="selectPart('膝')">膝</div>
+    <div class="option" onclick="selectPart('その他')">その他</div>
   </div>
 
-  <script src="script.js"></script>
+  <button class="btn primary" id="next1" disabled onclick="goStep(2)">次へ</button>
+</div>
+
+<!-- STEP2 -->
+<div class="card" id="step2" style="display:none">
+  <h3>痛みの強さ</h3>
+
+  <div class="grid">
+    <div class="option" onclick="selectScore(1)">😄 1</div>
+    <div class="option" onclick="selectScore(2)">🙂 2</div>
+    <div class="option" onclick="selectScore(3)">😐 3</div>
+    <div class="option" onclick="selectScore(4)">😣 4</div>
+    <div class="option" onclick="selectScore(5)">😫 5</div>
+  </div>
+
+  <button class="btn primary" id="next2" disabled onclick="goStep(3)">次へ</button>
+</div>
+
+<!-- STEP3 -->
+<div class="card" id="step3" style="display:none">
+  <h3>前週比</h3>
+
+  <div class="grid">
+    <div class="option" onclick="selectTrend('良くなった')">良くなった</div>
+    <div class="option" onclick="selectTrend('変わらない')">変わらない</div>
+    <div class="option" onclick="selectTrend('悪くなった')">悪くなった</div>
+  </div>
+
+  <button class="btn primary" id="next3" disabled onclick="goStep(4)">次へ</button>
+</div>
+
+<!-- STEP4 -->
+<div class="card" id="step4" style="display:none">
+  <h3>作業</h3>
+
+  <div class="grid">
+    <div class="option" onclick="selectWork('重量物')">重量物</div>
+    <div class="option" onclick="selectWork('高所作業')">高所作業</div>
+    <div class="option" onclick="selectWork('ねじり動作')">ねじり動作</div>
+    <div class="option" onclick="selectWork('長時間')">長時間</div>
+  </div>
+
+  <button class="btn primary" onclick="submitData()">送信</button>
+</div>
+
+<!-- 完了 -->
+<div class="card" id="done" style="display:none">
+  <h3>送信完了</h3>
+</div>
+
+</div>
+
+<script>
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxeNw-nT-GnATTog30-aOsWZpfTTNh_M0nluMxRdp6gYfHMLeqEY5pjj9PGEFnElG7U/exec";
+
+const state = {
+  part:"",
+  score:null,
+  trend:"",
+  work:""
+};
+
+function goStep(n){
+  document.querySelectorAll(".card").forEach(e=>e.style.display="none");
+  document.getElementById("step"+n).style.display="block";
+}
+
+function selectNoPain(){
+  state.part = "特にない";
+  goStep(3);
+}
+
+function selectPart(v){
+  state.part = v;
+  document.getElementById("next1").disabled=false;
+}
+
+function selectScore(v){
+  state.score = v;
+  document.getElementById("next2").disabled=false;
+}
+
+function selectTrend(v){
+  state.trend = v;
+  document.getElementById("next3").disabled=false;
+}
+
+function selectWork(v){
+  state.work = v;
+}
+
+async function submitData(){
+
+  try{
+    await fetch(GAS_URL,{
+      method:"POST",
+      body:JSON.stringify(state)
+    });
+
+    goStep("done");
+
+  }catch(e){
+    alert("送信失敗");
+  }
+}
+</script>
+
 </body>
 </html>
