@@ -275,7 +275,7 @@ function bindEvents() {
     });
   });
 
-  const submitBtn = document.getElementById("submitBtn");
+ const submitBtn = document.getElementById("submitBtn");
 if (submitBtn) {
   submitBtn.addEventListener("click", async () => {
     const partText = state.noPain ? "特にない" : textValue(state.part, state.otherPart);
@@ -312,7 +312,6 @@ if (submitBtn) {
 
       const profile = await liff.getProfile();
 
-      // 先にスプレッドシート保存
       const params = new URLSearchParams();
       params.append("name", profile.displayName || "");
       params.append("userId", profile.userId || "");
@@ -323,6 +322,7 @@ if (submitBtn) {
       params.append("work", workText);
       params.append("memo", memoText);
 
+      // 先にスプレッドシート保存
       const res = await fetch(GAS_URL, {
         method: "POST",
         body: params
