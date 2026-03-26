@@ -1,5 +1,8 @@
 const LIFF_ID = "2009527083-MXJru0ta";
-const GAS_URL = "https://script.google.com/macros/s/AKfycbx7A3kj4H5yE3oGC9B-X212O_SUVhH_HiheGGcAtH5MITL94-8-ATN-HmhdmtAjmhPA/exec";  step: 1,
+const GAS_URL = "https://script.google.com/macros/s/AKfycbx7A3kj4H5yE3oGC9B-X212O_SUVhH_HiheGGcAtH5MITL94-8-ATN-HmhdmtAjmhPA/exec";
+
+const state = {
+  step: 1,
   noPain: false,
   part: "",
   otherPart: "",
@@ -17,13 +20,16 @@ const faceLevels = [
   { value: 3, emoji: "😣", label: "やや強い" },
   { value: 4, emoji: "😖", label: "強い" },
   { value: 5, emoji: "😭", label: "かなり強い" }
-];function textValue(v, other) {
+];
+
+function textValue(v, other) {
   return v === "その他" ? (other || "その他") : v;
 }
 
 function showStep(step) {
   state.step = step;
-  ["step1", "step2", "step3", "step4", "step5", "done"].forEach(id => {
+
+  ["step1", "step2", "step3", "step4", "step5", "done"].forEach((id) => {
     const el = document.getElementById(id);
     if (el) el.classList.add("hidden");
   });
@@ -34,7 +40,7 @@ function showStep(step) {
 }
 
 function updateStep1() {
-  document.querySelectorAll("#partOptions .option-btn").forEach(btn => {
+  document.querySelectorAll("#partOptions .option-btn").forEach((btn) => {
     btn.classList.toggle("selected", btn.dataset.value === state.part && !state.noPain);
   });
 
@@ -45,21 +51,20 @@ function updateStep1() {
 
   const otherPartWrap = document.getElementById("otherPartWrap");
   if (otherPartWrap) {
-    otherPartWrap.classList.toggle(
-      "hidden",
-      !(state.part === "その他" && !state.noPain)
-    );
+    otherPartWrap.classList.toggle("hidden", !(state.part === "その他" && !state.noPain));
   }
 
   const toStep2 = document.getElementById("toStep2");
   if (toStep2) {
-    toStep2.disabled =
-      !(state.noPain || (!!state.part && (state.part !== "その他" || !!state.otherPart.trim())));
+    toStep2.disabled = !(
+      state.noPain ||
+      (!!state.part && (state.part !== "その他" || !!state.otherPart.trim()))
+    );
   }
 }
 
 function updateStep2() {
-  document.querySelectorAll(".face-btn").forEach(btn => {
+  document.querySelectorAll(".face-btn").forEach((btn) => {
     btn.classList.toggle("selected", Number(btn.dataset.value) === state.score);
   });
 
@@ -70,7 +75,7 @@ function updateStep2() {
 }
 
 function updateStep3() {
-  document.querySelectorAll("#trendOptions .option-btn").forEach(btn => {
+  document.querySelectorAll("#trendOptions .option-btn").forEach((btn) => {
     btn.classList.toggle("selected", btn.dataset.value === state.trend);
   });
 
@@ -81,7 +86,7 @@ function updateStep3() {
 }
 
 function updateStep4() {
-  document.querySelectorAll("#workOptions .option-btn").forEach(btn => {
+  document.querySelectorAll("#workOptions .option-btn").forEach((btn) => {
     btn.classList.toggle("selected", btn.dataset.value === state.work);
   });
 
@@ -92,8 +97,10 @@ function updateStep4() {
 
   const toStep5 = document.getElementById("toStep5");
   if (toStep5) {
-    toStep5.disabled =
-      !(!!state.work && (state.work !== "その他" || !!state.otherWork.trim()));
+    toStep5.disabled = !(
+      !!state.work &&
+      (state.work !== "その他" || !!state.otherWork.trim())
+    );
   }
 }
 
@@ -106,7 +113,9 @@ function updateConfirm() {
   const confirmMemo = document.getElementById("confirmMemo");
 
   if (confirmPart) {
-    confirmPart.textContent = state.noPain ? "特にない" : textValue(state.part, state.otherPart);
+    confirmPart.textContent = state.noPain
+      ? "特にない"
+      : textValue(state.part, state.otherPart);
   }
 
   if (confirmScore) {
@@ -136,7 +145,7 @@ function createScoreButtons() {
 
   wrap.innerHTML = "";
 
-  faceLevels.forEach(item => {
+  faceLevels.forEach((item) => {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "face-btn";
@@ -157,7 +166,7 @@ function createScoreButtons() {
 }
 
 function bindEvents() {
-  document.querySelectorAll("#partOptions .option-btn").forEach(btn => {
+  document.querySelectorAll("#partOptions .option-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       state.noPain = false;
       state.part = btn.dataset.value;
@@ -170,6 +179,7 @@ function bindEvents() {
       }
 
       updateStep1();
+      updateStep2();
     });
   });
 
@@ -182,12 +192,14 @@ function bindEvents() {
       state.score = null;
       state.trend = "";
       updateStep1();
+      updateStep2();
+      updateStep3();
     });
   }
 
   const otherPartInput = document.getElementById("otherPart");
   if (otherPartInput) {
-    otherPartInput.addEventListener("input", e => {
+    otherPartInput.addEventListener("input", (e) => {
       state.otherPart = e.target.value;
       updateStep1();
     });
@@ -211,7 +223,7 @@ function bindEvents() {
     });
   }
 
-  document.querySelectorAll("#trendOptions .option-btn").forEach(btn => {
+  document.querySelectorAll("#trendOptions .option-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       state.trend = btn.dataset.value;
       updateStep3();
@@ -220,7 +232,7 @@ function bindEvents() {
 
   const teamInput = document.getElementById("team");
   if (teamInput) {
-    teamInput.addEventListener("input", e => {
+    teamInput.addEventListener("input", (e) => {
       state.team = e.target.value;
     });
   }
@@ -232,7 +244,7 @@ function bindEvents() {
     });
   }
 
-  document.querySelectorAll("#workOptions .option-btn").forEach(btn => {
+  document.querySelectorAll("#workOptions .option-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       state.work = btn.dataset.value;
 
@@ -248,7 +260,7 @@ function bindEvents() {
 
   const otherWorkInput = document.getElementById("otherWork");
   if (otherWorkInput) {
-    otherWorkInput.addEventListener("input", e => {
+    otherWorkInput.addEventListener("input", (e) => {
       state.otherWork = e.target.value;
       updateStep4();
     });
@@ -256,7 +268,7 @@ function bindEvents() {
 
   const memoInput = document.getElementById("memo");
   if (memoInput) {
-    memoInput.addEventListener("input", e => {
+    memoInput.addEventListener("input", (e) => {
       state.memo = e.target.value;
     });
   }
@@ -269,23 +281,23 @@ function bindEvents() {
     });
   }
 
-  document.querySelectorAll(".back").forEach(btn => {
+  document.querySelectorAll(".back").forEach((btn) => {
     btn.addEventListener("click", () => {
       showStep(Number(btn.dataset.back));
     });
   });
 
- const submitBtn = document.getElementById("submitBtn");
-if (submitBtn) {
-  submitBtn.addEventListener("click", async () => {
-    const partText = state.noPain ? "特にない" : textValue(state.part, state.otherPart);
-    const scoreText = state.noPain ? "なし" : `${state.score}/5`;
-    const trendText = state.trend || "未入力";
-    const teamText = state.team || "未入力";
-    const workText = textValue(state.work, state.otherWork);
-    const memoText = state.memo || "なし";
+  const submitBtn = document.getElementById("submitBtn");
+  if (submitBtn) {
+    submitBtn.addEventListener("click", async () => {
+      const partText = state.noPain ? "特にない" : textValue(state.part, state.otherPart);
+      const scoreText = state.noPain ? "なし" : `${state.score}/5`;
+      const trendText = state.trend || "未入力";
+      const teamText = state.team || "未入力";
+      const workText = textValue(state.work, state.otherWork);
+      const memoText = state.memo || "なし";
 
-    const resultMessage =
+      const resultMessage =
 `【現場fit チェック】
 部位：${partText}
 痛み：${scoreText}
@@ -294,89 +306,89 @@ if (submitBtn) {
 作業：${workText}
 補足：${memoText}`;
 
-    try {
-      if (typeof liff === "undefined") {
-        alert("LIFFが読み込まれていません");
-        return;
-      }
-
-      if (!liff.isInClient()) {
-        alert("LINEアプリ内で開いてください");
-        return;
-      }
-
-      if (!liff.isLoggedIn()) {
-        alert("LINEからもう一度開き直してください");
-        return;
-      }
-
-      const profile = await liff.getProfile();
-
-      const params = new URLSearchParams();
-      params.append("name", profile.displayName || "");
-      params.append("userId", profile.userId || "");
-      params.append("part", partText);
-      params.append("score", scoreText);
-      params.append("trend", trendText);
-      params.append("team", teamText);
-      params.append("work", workText);
-      params.append("memo", memoText);
-
-      // 先にスプレッドシート保存
-      const res = await fetch(GAS_URL, {
-        method: "POST",
-        body: params
-      });
-
-      const text = await res.text();
-      console.log("GAS response:", text);
-
-      if (!res.ok) {
-        throw new Error("HTTP " + res.status);
-      }
-
-      if (String(text).startsWith("ERROR")) {
-        throw new Error(text);
-      }
-
-      // LINE送信
       try {
-        await liff.sendMessages([
-          {
-            type: "text",
-            text: resultMessage
-          }
-        ]);
-      } catch (lineError) {
-        console.warn("LINE送信失敗:", lineError);
-      }
+        if (typeof liff === "undefined") {
+          alert("LIFFが読み込まれていません");
+          return;
+        }
 
-      const doneMessage = document.getElementById("doneMessage");
-      if (doneMessage) {
-        doneMessage.textContent =
-          !state.noPain && (state.score >= 4 || state.trend === "悪くなった")
-            ? "入力ありがとうございました。負担が強い可能性があります。必要に応じて早めの相談を検討してください。"
-            : "入力ありがとうございました。内容は現場改善と再発防止に活用されます。";
-      }
+        if (!liff.isInClient()) {
+          alert("LINEアプリ内で開いてください");
+          return;
+        }
 
-      const doneSummary = document.getElementById("doneSummary");
-      if (doneSummary) {
-        doneSummary.innerHTML =
-          `部位：${partText}<br>
-           痛み：${scoreText}<br>
-           前週比：${trendText}<br>
-           班・工区：${teamText}<br>
-           作業：${workText}<br>
-           補足：${memoText}`;
-      }
+        if (!liff.isLoggedIn()) {
+          alert("LINEからもう一度開き直してください");
+          return;
+        }
 
-      showStep(6);
-    } catch (error) {
-      console.error("送信エラー:", error);
-      alert("送信に失敗しました: " + (error.message || JSON.stringify(error)));
-    }
-  });
-}  const closeBtn = document.getElementById("closeBtn");
+        const profile = await liff.getProfile();
+
+        const params = new URLSearchParams();
+        params.append("name", profile.displayName || "");
+        params.append("userId", profile.userId || "");
+        params.append("part", partText);
+        params.append("score", scoreText);
+        params.append("trend", trendText);
+        params.append("team", teamText);
+        params.append("work", workText);
+        params.append("memo", memoText);
+
+        const res = await fetch(GAS_URL, {
+          method: "POST",
+          body: params
+        });
+
+        const text = await res.text();
+        console.log("GAS response:", text);
+
+        if (!res.ok) {
+          throw new Error("HTTP " + res.status);
+        }
+
+        if (String(text).startsWith("ERROR")) {
+          throw new Error(text);
+        }
+
+        try {
+          await liff.sendMessages([
+            {
+              type: "text",
+              text: resultMessage
+            }
+          ]);
+        } catch (lineError) {
+          console.warn("LINE送信失敗:", lineError);
+        }
+
+        const doneMessage = document.getElementById("doneMessage");
+        if (doneMessage) {
+          doneMessage.textContent =
+            !state.noPain && (state.score >= 4 || state.trend === "悪くなった")
+              ? "入力ありがとうございました。負担が強い可能性があります。必要に応じて早めの相談を検討してください。"
+              : "入力ありがとうございました。内容は現場改善と再発防止に活用されます。";
+        }
+
+        const doneSummary = document.getElementById("doneSummary");
+        if (doneSummary) {
+          doneSummary.innerHTML =
+            `部位：${partText}<br>
+             痛み：${scoreText}<br>
+             前週比：${trendText}<br>
+             班・工区：${teamText}<br>
+             作業：${workText}<br>
+             補足：${memoText}`;
+        }
+
+        showStep(6);
+      } catch (error) {
+        console.error("送信エラー:", error);
+        alert("送信に失敗しました: " + (error.message || JSON.stringify(error)));
+      }
+    });
+  }
+
+  const closeBtn = document.getElementById("closeBtn");
   if (closeBtn) {
     closeBtn.addEventListener("click", () => {
       if (typeof liff !== "undefined" && liff.isInClient()) {
