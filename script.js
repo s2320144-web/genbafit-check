@@ -291,9 +291,8 @@ function bindEvents() {
   if (submitBtn) {
     submitBtn.addEventListener("click", async () => {
       const partText = state.noPain ? "特にない" : textValue(state.part, state.otherPart);
-      const scoreText = state.noPain ? "なし" : `${state.score}/5`;
-      const trendText = state.trend || "未入力";
-      const teamText = state.team || "未入力";
+const scoreText = state.noPain ? "" : state.score;
+const trendText = state.trend || "未入力";      const teamText = state.team || "未入力";
       const workText = textValue(state.work, state.otherWork);
       const memoText = state.memo || "なし";
 
